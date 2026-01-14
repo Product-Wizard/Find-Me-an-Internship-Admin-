@@ -77,23 +77,23 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
   });
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex justify-between items-end">
+    <div className="space-y-6 animate-fade-in w-full max-w-full">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
           <h2 className="text-2xl font-bold text-brand-dark">Job Management</h2>
           <p className="text-slate-500">Oversee active listings and applications.</p>
         </div>
-        <div className="flex gap-2">
-          <label className="cursor-pointer bg-white border border-slate-200 hover:border-brand-teal text-slate-600 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all">
+        <div className="flex flex-wrap gap-2 w-full md:w-auto">
+          <label className="flex-1 md:flex-none justify-center cursor-pointer bg-white border border-slate-200 hover:border-brand-teal text-slate-600 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all">
             <FileSpreadsheet className="w-4 h-4 text-green-600" />
             <span className="text-sm">Import CSV</span>
             <input type="file" accept=".csv" className="hidden" onChange={handleCsvUpload} />
           </label>
           <button 
             onClick={() => setIsAdding(!isAdding)}
-            className="bg-brand-teal hover:bg-brand-dark text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all shadow-sm"
+            className="flex-1 md:flex-none justify-center bg-brand-teal hover:bg-brand-dark text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all shadow-sm"
           >
-            <Plus className="w-4 h-4" /> Add Opportunity
+            <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Add Opportunity</span><span className="sm:hidden">Add</span>
           </button>
         </div>
       </div>
@@ -101,18 +101,20 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
       {isAdding && (
         <div className="bg-white p-6 rounded-xl border border-brand-teal/20 shadow-lg mb-6 animate-fade-in-up">
           <h3 className="font-bold text-brand-dark mb-4">Add New Opportunity</h3>
-          <form onSubmit={handleAddJob} className="grid grid-cols-2 gap-4">
+          <form onSubmit={handleAddJob} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input required placeholder="Job Title" className="p-2 border rounded" value={newJob.title} onChange={e => setNewJob({...newJob, title: e.target.value})} />
             <input required placeholder="Company" className="p-2 border rounded" value={newJob.company} onChange={e => setNewJob({...newJob, company: e.target.value})} />
             <input required placeholder="Location" className="p-2 border rounded" value={newJob.location} onChange={e => setNewJob({...newJob, location: e.target.value})} />
-            <select className="p-2 border rounded" value={newJob.type} onChange={e => setNewJob({...newJob, type: e.target.value as any})}>
-              <option>On-site</option><option>Remote</option><option>Hybrid</option>
-            </select>
-            <select className="p-2 border rounded" value={newJob.category} onChange={e => setNewJob({...newJob, category: e.target.value})}>
-              <option>Tech</option><option>Marketing</option><option>Finance</option><option>Design</option><option>Admin</option>
-            </select>
-            <input required placeholder="Description" className="p-2 border rounded col-span-2" value={newJob.description} onChange={e => setNewJob({...newJob, description: e.target.value})} />
-            <div className="col-span-2 flex justify-end gap-2 mt-2">
+            <div className="grid grid-cols-2 gap-4">
+              <select className="p-2 border rounded" value={newJob.type} onChange={e => setNewJob({...newJob, type: e.target.value as any})}>
+                <option>On-site</option><option>Remote</option><option>Hybrid</option>
+              </select>
+              <select className="p-2 border rounded" value={newJob.category} onChange={e => setNewJob({...newJob, category: e.target.value})}>
+                <option>Tech</option><option>Marketing</option><option>Finance</option><option>Design</option><option>Admin</option>
+              </select>
+            </div>
+            <input required placeholder="Description" className="p-2 border rounded md:col-span-2" value={newJob.description} onChange={e => setNewJob({...newJob, description: e.target.value})} />
+            <div className="md:col-span-2 flex justify-end gap-2 mt-2">
               <button type="button" onClick={() => setIsAdding(false)} className="px-4 py-2 text-slate-500">Cancel</button>
               <button type="submit" className="px-4 py-2 bg-brand-teal text-white rounded font-bold">Save Job</button>
             </div>
@@ -121,7 +123,7 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
       )}
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex gap-4">
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-4">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
           <input 
@@ -132,10 +134,10 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
             onChange={(e) => setFilter(e.target.value)}
           />
         </div>
-        <div className="flex items-center gap-2 border-l border-slate-100 pl-4">
+        <div className="flex items-center gap-2 border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-4">
           <Filter className="w-4 h-4 text-slate-400" />
           <select 
-            className="bg-transparent text-sm font-medium text-slate-600 outline-none"
+            className="bg-transparent text-sm font-medium text-slate-600 outline-none w-full md:w-auto"
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
           >
@@ -149,52 +151,54 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
 
       {/* Table */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-slate-50 border-b border-slate-200">
-            <tr>
-              <th className="p-4 text-xs font-bold text-slate-500 uppercase">Role / Company</th>
-              <th className="p-4 text-xs font-bold text-slate-500 uppercase">Location</th>
-              <th className="p-4 text-xs font-bold text-slate-500 uppercase">Type</th>
-              <th className="p-4 text-xs font-bold text-slate-500 uppercase">Posted</th>
-              <th className="p-4 text-xs font-bold text-slate-500 uppercase text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {filteredJobs.map(job => (
-              <tr key={job.id} className="hover:bg-slate-50/50 transition-colors group">
-                <td className="p-4">
-                  <div className="font-bold text-brand-dark">{job.title}</div>
-                  <div className="text-sm text-slate-500 flex items-center gap-1">
-                    <Building2 className="w-3 h-3" /> {job.company}
-                  </div>
-                </td>
-                <td className="p-4 text-sm text-slate-600">
-                  <div className="flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-slate-400" /> {job.location}
-                  </div>
-                </td>
-                <td className="p-4">
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${
-                    job.type === 'Remote' ? 'bg-purple-100 text-purple-700' :
-                    job.type === 'Hybrid' ? 'bg-blue-100 text-blue-700' :
-                    'bg-green-100 text-green-700'
-                  }`}>
-                    {job.type}
-                  </span>
-                </td>
-                <td className="p-4 text-sm text-slate-500">{job.postedDate}</td>
-                <td className="p-4 text-right">
-                  <button 
-                    onClick={() => handleDelete(job.id)}
-                    className="p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left min-w-[800px]">
+            <thead className="bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th className="p-4 text-xs font-bold text-slate-500 uppercase">Role / Company</th>
+                <th className="p-4 text-xs font-bold text-slate-500 uppercase">Location</th>
+                <th className="p-4 text-xs font-bold text-slate-500 uppercase">Type</th>
+                <th className="p-4 text-xs font-bold text-slate-500 uppercase">Posted</th>
+                <th className="p-4 text-xs font-bold text-slate-500 uppercase text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {filteredJobs.map(job => (
+                <tr key={job.id} className="hover:bg-slate-50/50 transition-colors group">
+                  <td className="p-4">
+                    <div className="font-bold text-brand-dark">{job.title}</div>
+                    <div className="text-sm text-slate-500 flex items-center gap-1">
+                      <Building2 className="w-3 h-3" /> {job.company}
+                    </div>
+                  </td>
+                  <td className="p-4 text-sm text-slate-600">
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3 text-slate-400" /> {job.location}
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      job.type === 'Remote' ? 'bg-purple-100 text-purple-700' :
+                      job.type === 'Hybrid' ? 'bg-blue-100 text-blue-700' :
+                      'bg-green-100 text-green-700'
+                    }`}>
+                      {job.type}
+                    </span>
+                  </td>
+                  <td className="p-4 text-sm text-slate-500">{job.postedDate}</td>
+                  <td className="p-4 text-right">
+                    <button 
+                      onClick={() => handleDelete(job.id)}
+                      className="p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         {filteredJobs.length === 0 && (
           <div className="p-12 text-center text-slate-400">
             No jobs found matching your filters.
