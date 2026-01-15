@@ -4,8 +4,9 @@ let aiClient: GoogleGenAI | null = null;
 
 const getApiKey = () => {
   try {
-    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
-      return process.env.API_KEY;
+    const env = import.meta as any
+    if (typeof process !== 'undefined' && process.env && env.VITE_GEMINI_API_KEY) {
+      return env.VITE_GEMINI_API_KEY;
     }
   } catch (e) {
     // process might not be accessible
@@ -25,7 +26,7 @@ const getAiClient = () => {
 };
 
 export const streamCareerAdvice = async (
-  userMessage: string, 
+  userMessage: string,
   history: { role: string; parts: { text: string }[] }[]
 ) => {
   try {
