@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Plus, Trash2, FileSpreadsheet, Download, Filter, Building2, MapPin } from 'lucide-react';
+import { Search, Plus, Trash2, FileSpreadsheet, Download, Filter, Building2, MapPin, Edit, Loader2 } from 'lucide-react';
 import { Job } from '../types';
 
 interface AdminJobManagerProps {
@@ -11,7 +11,8 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
   const [filter, setFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
   const [isAdding, setIsAdding] = useState(false);
-  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   // New Job Form State
   const [newJob, setNewJob] = useState<Partial<Job>>({
@@ -24,22 +25,46 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
     }
   };
 
-  const handleAddJob = (e: React.FormEvent) => {
+  const handleEdit = (job: Job) => {
+    setNewJob(job);
+    setEditingId(job.id);
+    setIsAdding(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const job: Job = {
-      id: Date.now().toString(),
-      postedDate: 'Just now',
-      ...newJob as Job
-    };
-    setJobs([job, ...jobs]);
+    
+    if (editingId) {
+      // Update existing job
+      setJobs(jobs.map(j => j.id === editingId ? { ...j, ...newJob } as Job : j));
+      setEditingId(null);
+    } else {
+      // Add new job
+      const job: Job = {
+        id: Date.now().toString(),
+        postedDate: 'Just now',
+        ...newJob as Job
+      };
+      setJobs([job, ...jobs]);
+    }
+    
     setIsAdding(false);
+    setNewJob({ title: '', company: '', location: '', type: 'On-site', category: 'Tech', description: '' });
+  };
+
+  const handleCancel = () => {
+    setIsAdding(false);
+    setEditingId(null);
     setNewJob({ title: '', company: '', location: '', type: 'On-site', category: 'Tech', description: '' });
   };
 
   const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setIsUploading(true);
       const reader = new FileReader();
+      
       reader.onload = (event) => {
         const text = event.target?.result as string;
         // Simple CSV parser: assumes header row, comma separated
@@ -62,9 +87,20 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
             });
           }
         }
-        setJobs([...newJobs, ...jobs]);
-        alert(`Successfully imported ${newJobs.length} jobs.`);
+
+        // Simulate a small delay for better UX
+        setTimeout(() => {
+          setJobs([...newJobs, ...jobs]);
+          setIsUploading(false);
+          alert(`Successfully imported ${newJobs.length} jobs.`);
+        }, 800);
       };
+      
+      reader.onerror = () => {
+        setIsUploading(false);
+        alert('Error reading file');
+      };
+
       reader.readAsText(file);
     }
   };
@@ -84,13 +120,31 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
           <p className="text-slate-500">Oversee active listings and applications.</p>
         </div>
         <div className="flex flex-wrap gap-2 w-full md:w-auto">
-          <label className="flex-1 md:flex-none justify-center cursor-pointer bg-white border border-slate-200 hover:border-brand-teal text-slate-600 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all">
-            <FileSpreadsheet className="w-4 h-4 text-green-600" />
-            <span className="text-sm">Import CSV</span>
-            <input type="file" accept=".csv" className="hidden" onChange={handleCsvUpload} />
+          <label className={`flex-1 md:flex-none justify-center cursor-pointer bg-white border border-slate-200 hover:border-brand-teal text-slate-600 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all ${isUploading ? 'opacity-70 pointer-events-none' : ''}`}>
+            {isUploading ? (
+              <Loader2 className="w-4 h-4 text-brand-teal animate-spin" />
+            ) : (
+              <FileSpreadsheet className="w-4 h-4 text-green-600" />
+            )}
+            <span className="text-sm">{isUploading ? 'Importing...' : 'Import CSV'}</span>
+            <input 
+              type="file" 
+              accept=".csv" 
+              className="hidden" 
+              onChange={handleCsvUpload} 
+              disabled={isUploading}
+            />
           </label>
           <button 
-            onClick={() => setIsAdding(!isAdding)}
+            onClick={() => {
+              if (isAdding && !editingId) {
+                setIsAdding(false);
+              } else {
+                setEditingId(null);
+                setNewJob({ title: '', company: '', location: '', type: 'On-site', category: 'Tech', description: '' });
+                setIsAdding(true);
+              }
+            }}
             className="flex-1 md:flex-none justify-center bg-brand-teal hover:bg-brand-dark text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all shadow-sm"
           >
             <Plus className="w-4 h-4" /> <span className="hidden sm:inline">Add Opportunity</span><span className="sm:hidden">Add</span>
@@ -100,8 +154,8 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
 
       {isAdding && (
         <div className="bg-white p-6 rounded-xl border border-brand-teal/20 shadow-lg mb-6 animate-fade-in-up">
-          <h3 className="font-bold text-brand-dark mb-4">Add New Opportunity</h3>
-          <form onSubmit={handleAddJob} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <h3 className="font-bold text-brand-dark mb-4">{editingId ? 'Edit Opportunity' : 'Add New Opportunity'}</h3>
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input required placeholder="Job Title" className="p-2 border rounded" value={newJob.title} onChange={e => setNewJob({...newJob, title: e.target.value})} />
             <input required placeholder="Company" className="p-2 border rounded" value={newJob.company} onChange={e => setNewJob({...newJob, company: e.target.value})} />
             <input required placeholder="Location" className="p-2 border rounded" value={newJob.location} onChange={e => setNewJob({...newJob, location: e.target.value})} />
@@ -115,8 +169,8 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
             </div>
             <input required placeholder="Description" className="p-2 border rounded md:col-span-2" value={newJob.description} onChange={e => setNewJob({...newJob, description: e.target.value})} />
             <div className="md:col-span-2 flex justify-end gap-2 mt-2">
-              <button type="button" onClick={() => setIsAdding(false)} className="px-4 py-2 text-slate-500">Cancel</button>
-              <button type="submit" className="px-4 py-2 bg-brand-teal text-white rounded font-bold">Save Job</button>
+              <button type="button" onClick={handleCancel} className="px-4 py-2 text-slate-500">Cancel</button>
+              <button type="submit" className="px-4 py-2 bg-brand-teal text-white rounded font-bold">{editingId ? 'Update Job' : 'Save Job'}</button>
             </div>
           </form>
         </div>
@@ -187,12 +241,22 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
                   </td>
                   <td className="p-4 text-sm text-slate-500">{job.postedDate}</td>
                   <td className="p-4 text-right">
-                    <button 
-                      onClick={() => handleDelete(job.id)}
-                      className="p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex justify-end gap-2">
+                      <button 
+                        onClick={() => handleEdit(job)}
+                        className="p-2 hover:bg-blue-50 text-slate-400 hover:text-blue-600 rounded-lg transition-colors"
+                        title="Edit"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(job.id)}
+                        className="p-2 hover:bg-red-50 text-slate-400 hover:text-red-600 rounded-lg transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -1,4 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { 
+  Routes, 
+  Route, 
+  Navigate, 
+  useLocation, 
+  useNavigate,
+  Outlet 
+} from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Briefcase, 
@@ -16,6 +24,7 @@ import { AdminLogin } from './components/AdminLogin';
 import { AdminJobManager } from './components/AdminJobManager';
 import { AdminResourceManager } from './components/AdminResourceManager';
 import { PlacementsChart, DiversityChart } from './components/ImpactCharts';
+import { AICareerCoach } from './components/AICareerCoach';
 import { Job, Article } from './types';
 
 // Initial Mock Data
@@ -36,16 +45,16 @@ const SidebarLink: React.FC<{
   to: string, 
   icon: any, 
   label: string, 
-  currentPath: string, 
-  onNavigate: (path: string) => void,
   onClick?: () => void
-}> = ({ to, icon: Icon, label, currentPath, onNavigate, onClick }) => {
-  const isActive = currentPath === to;
+}> = ({ to, icon: Icon, label, onClick }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isActive = location.pathname.startsWith(to);
 
   return (
     <button
       onClick={() => {
-        onNavigate(to);
+        navigate(to);
         if (onClick) onClick();
       }}
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium ${
@@ -61,16 +70,11 @@ const SidebarLink: React.FC<{
 };
 
 // Layout Component
-const DashboardLayout: React.FC<{ 
-  children: React.ReactNode, 
-  onLogout: () => void,
-  currentPath: string,
-  onNavigate: (path: string) => void
-}> = ({ children, onLogout, currentPath, onNavigate }) => {
+const DashboardLayout: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 flex font-sans overflow-x-hidden relative">
       {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div 
@@ -97,12 +101,12 @@ const DashboardLayout: React.FC<{
         </div>
 
         <nav className="flex-1 p-4 space-y-2 mt-4 overflow-y-auto">
-          <SidebarLink to="/admin/overview" icon={LayoutDashboard} label="Overview" currentPath={currentPath} onNavigate={onNavigate} onClick={() => setIsSidebarOpen(false)} />
-          <SidebarLink to="/admin/jobs" icon={Briefcase} label="Job Management" currentPath={currentPath} onNavigate={onNavigate} onClick={() => setIsSidebarOpen(false)} />
-          <SidebarLink to="/admin/resources" icon={FileText} label="Resource Center" currentPath={currentPath} onNavigate={onNavigate} onClick={() => setIsSidebarOpen(false)} />
+          <SidebarLink to="/admin/overview" icon={LayoutDashboard} label="Overview" onClick={() => setIsSidebarOpen(false)} />
+          <SidebarLink to="/admin/jobs" icon={Briefcase} label="Job Management" onClick={() => setIsSidebarOpen(false)} />
+          <SidebarLink to="/admin/resources" icon={FileText} label="Resource Center" onClick={() => setIsSidebarOpen(false)} />
           
           <div className="pt-4 mt-4 border-t border-white/10">
-            <SidebarLink to="/admin/settings" icon={Settings} label="Settings" currentPath={currentPath} onNavigate={onNavigate} onClick={() => setIsSidebarOpen(false)} />
+            <SidebarLink to="/admin/settings" icon={Settings} label="Settings" onClick={() => setIsSidebarOpen(false)} />
           </div>
         </nav>
 
@@ -158,15 +162,83 @@ const DashboardLayout: React.FC<{
         </header>
 
         {/* Content View */}
-        <main className="p-4 md:p-8 flex-1 overflow-x-hidden">
-          {children}
+        <main className="p-4 md:p-8 flex-1 overflow-x-hidden relative">
+          <Outlet />
         </main>
       </div>
+
+      {/* AI Assistant - Floating Button */}
+      <AICareerCoach />
     </div>
   );
 };
 
-// Main App Component with Manual Routing
+// Components for Routes
+const Overview: React.FC<{ jobs: Job[], articles: Article[] }> = ({ jobs, articles }) => (
+  <div className="space-y-8 animate-fade-in">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {[
+        { label: 'Total Opportunities', value: jobs.length, trend: '+12%', color: 'border-brand-teal' },
+        { label: 'Resource Articles', value: articles.length, trend: '+2', color: 'border-brand-accent' },
+        { label: 'Active Applications', value: '1,248', trend: '+18%', color: 'border-blue-500' },
+        { label: 'Verified Students', value: '5,431', trend: '+24%', color: 'border-purple-500' },
+      ].map((stat, i) => (
+        <div key={i} className={`bg-white p-6 rounded-2xl shadow-sm border-l-4 ${stat.color} hover:shadow-md transition-shadow`}>
+          <div className="text-slate-500 text-sm font-medium mb-1 uppercase tracking-wider">{stat.label}</div>
+          <div className="flex items-end gap-3">
+            <span className="text-3xl font-bold text-brand-dark">{stat.value}</span>
+            <span className="text-xs font-bold text-green-600 pb-1">{stat.trend}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div className="grid lg:grid-cols-2 gap-8">
+      <PlacementsChart />
+      <DiversityChart />
+    </div>
+
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+      <h3 className="text-lg font-bold text-brand-dark mb-4">Recent System Activity</h3>
+      <div className="space-y-4">
+        {[
+          'Internship "React.js Intern" was posted by Bodija Software.',
+          'New resource article "Interview Tips" published by Sarah Jenkins.',
+          'CSV bulk upload processed: 15 new listings added.',
+          'Admin login detected from new IP address: 192.168.1.1'
+        ].map((activity, i) => (
+          <div key={i} className="flex items-center gap-3 text-sm text-slate-600 pb-3 border-b border-slate-50 last:border-0 last:pb-0">
+            <div className="w-2 h-2 rounded-full bg-brand-teal"></div>
+            {activity}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+const SettingsView: React.FC = () => (
+  <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 max-w-2xl">
+    <h2 className="text-2xl font-bold text-brand-dark mb-6">Portal Settings</h2>
+    <div className="space-y-6">
+      <div>
+        <label className="block text-sm font-bold text-slate-700 mb-2">Primary Organization Name</label>
+        <input type="text" defaultValue="Find Me An Internship" className="w-full p-3 bg-slate-50 border rounded-lg" />
+      </div>
+      <div>
+        <label className="block text-sm font-bold text-slate-700 mb-2">Contact Support Email</label>
+        <input type="email" defaultValue="support@findmeaninternship.org" className="w-full p-3 bg-slate-50 border rounded-lg" />
+      </div>
+      <div className="pt-6 border-t border-slate-100">
+        <button className="bg-brand-dark text-white px-6 py-2 rounded-lg font-bold hover:bg-brand-teal transition-colors">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+// Main App Component with Router
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('admin_auth') === 'true';
@@ -174,134 +246,37 @@ const App: React.FC = () => {
   
   const [jobs, setJobs] = useState<Job[]>(INITIAL_JOBS);
   const [articles, setArticles] = useState<Article[]>(INITIAL_ARTICLES);
-  const [currentPath, setCurrentPath] = useState<string>(() => {
-     const hash = window.location.hash.replace('#', '');
-     return hash || (isAuthenticated ? '/admin/overview' : '/login');
-  });
-
-  useEffect(() => {
-    const onHashChange = () => {
-        const hash = window.location.hash.replace('#', '');
-        if (hash) setCurrentPath(hash);
-    };
-    window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
-  }, []);
-
-  const navigate = (path: string) => {
-    window.location.hash = path;
-    setCurrentPath(path);
-  };
 
   const handleLogin = () => {
     setIsAuthenticated(true);
     localStorage.setItem('admin_auth', 'true');
-    navigate('/admin/overview');
+    // Navigate is handled by the component render logic via Routes
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem('admin_auth');
-    navigate('/login');
   };
-  
-  // Auth Guard
-  useEffect(() => {
-    if (!isAuthenticated && currentPath !== '/login') {
-        navigate('/login');
-    } else if (isAuthenticated && (currentPath === '/login' || currentPath === '/' || currentPath === '')) {
-        navigate('/admin/overview');
-    }
-  }, [isAuthenticated, currentPath]);
-
-  // Route Rendering
-  if (!isAuthenticated) {
-     return <AdminLogin onLogin={handleLogin} />;
-  }
-
-  let content;
-  switch (currentPath) {
-    case '/admin/overview':
-      content = (
-        <div className="space-y-8 animate-fade-in">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-                { label: 'Total Opportunities', value: jobs.length, trend: '+12%', color: 'border-brand-teal' },
-                { label: 'Resource Articles', value: articles.length, trend: '+2', color: 'border-brand-accent' },
-                { label: 'Active Applications', value: '1,248', trend: '+18%', color: 'border-blue-500' },
-                { label: 'Verified Students', value: '5,431', trend: '+24%', color: 'border-purple-500' },
-            ].map((stat, i) => (
-                <div key={i} className={`bg-white p-6 rounded-2xl shadow-sm border-l-4 ${stat.color} hover:shadow-md transition-shadow`}>
-                <div className="text-slate-500 text-sm font-medium mb-1 uppercase tracking-wider">{stat.label}</div>
-                <div className="flex items-end gap-3">
-                    <span className="text-3xl font-bold text-brand-dark">{stat.value}</span>
-                    <span className="text-xs font-bold text-green-600 pb-1">{stat.trend}</span>
-                </div>
-                </div>
-            ))}
-            </div>
-
-            <div className="grid lg:grid-cols-2 gap-8">
-            <PlacementsChart />
-            <DiversityChart />
-            </div>
-
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-            <h3 className="text-lg font-bold text-brand-dark mb-4">Recent System Activity</h3>
-            <div className="space-y-4">
-                {[
-                'Internship "React.js Intern" was posted by Bodija Software.',
-                'New resource article "Interview Tips" published by Sarah Jenkins.',
-                'CSV bulk upload processed: 15 new listings added.',
-                'Admin login detected from new IP address: 192.168.1.1'
-                ].map((activity, i) => (
-                <div key={i} className="flex items-center gap-3 text-sm text-slate-600 pb-3 border-b border-slate-50 last:border-0 last:pb-0">
-                    <div className="w-2 h-2 rounded-full bg-brand-teal"></div>
-                    {activity}
-                </div>
-                ))}
-            </div>
-            </div>
-        </div>
-      );
-      break;
-    case '/admin/jobs':
-      content = <AdminJobManager jobs={jobs} setJobs={setJobs} />;
-      break;
-    case '/admin/resources':
-      content = <AdminResourceManager articles={articles} setArticles={setArticles} />;
-      break;
-    case '/admin/settings':
-      content = (
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 max-w-2xl">
-            <h2 className="text-2xl font-bold text-brand-dark mb-6">Portal Settings</h2>
-            <div className="space-y-6">
-            <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Primary Organization Name</label>
-                <input type="text" defaultValue="Find Me An Internship" className="w-full p-3 bg-slate-50 border rounded-lg" />
-            </div>
-            <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Contact Support Email</label>
-                <input type="email" defaultValue="support@findmeaninternship.org" className="w-full p-3 bg-slate-50 border rounded-lg" />
-            </div>
-            <div className="pt-6 border-t border-slate-100">
-                <button className="bg-brand-dark text-white px-6 py-2 rounded-lg font-bold hover:bg-brand-teal transition-colors">
-                Save Changes
-                </button>
-            </div>
-            </div>
-        </div>
-      );
-      break;
-    default:
-        // Fallback or 404
-        content = <div>Page not found</div>;
-  }
 
   return (
-    <DashboardLayout onLogout={handleLogout} currentPath={currentPath} onNavigate={navigate}>
-      {content}
-    </DashboardLayout>
+    <Routes>
+      <Route path="/login" element={
+        isAuthenticated ? <Navigate to="/admin/overview" replace /> : <AdminLogin onLogin={handleLogin} />
+      } />
+      
+      <Route path="/admin" element={
+        isAuthenticated ? <DashboardLayout onLogout={handleLogout} /> : <Navigate to="/login" replace />
+      }>
+        <Route path="overview" element={<Overview jobs={jobs} articles={articles} />} />
+        <Route path="jobs" element={<AdminJobManager jobs={jobs} setJobs={setJobs} />} />
+        <Route path="resources" element={<AdminResourceManager articles={articles} setArticles={setArticles} />} />
+        <Route path="settings" element={<SettingsView />} />
+        <Route index element={<Navigate to="overview" replace />} />
+      </Route>
+
+      <Route path="/" element={<Navigate to="/admin/overview" replace />} />
+      <Route path="*" element={<Navigate to="/admin/overview" replace />} />
+    </Routes>
   );
 };
 

@@ -1,12 +1,35 @@
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+let aiClient: GoogleGenAI | null = null;
+
+const getApiKey = () => {
+  try {
+    if (typeof process !== 'undefined' && process.env && process.env.API_KEY) {
+      return process.env.API_KEY;
+    }
+  } catch (e) {
+    // process might not be accessible
+  }
+  console.warn("Gemini API Key not found in process.env.API_KEY");
+  return '';
+};
+
+// Lazy initialization of the AI client
+const getAiClient = () => {
+  if (!aiClient) {
+    const apiKey = getApiKey();
+    // Initialize even if key is empty, to allow the error to bubble up from the SDK when used
+    aiClient = new GoogleGenAI({ apiKey });
+  }
+  return aiClient;
+};
 
 export const streamCareerAdvice = async (
   userMessage: string, 
   history: { role: string; parts: { text: string }[] }[]
 ) => {
   try {
+    const ai = getAiClient();
     const chat = ai.chats.create({
       model: 'gemini-3-flash-preview',
       config: {
