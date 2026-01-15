@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Search, Plus, Trash2, FileSpreadsheet, Download, Filter, Building2, MapPin, Edit, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Plus, Trash2, FileSpreadsheet, Download, Filter, Building2, MapPin, Edit, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Job } from '../types';
 
 interface AdminJobManagerProps {
@@ -7,21 +7,33 @@ interface AdminJobManagerProps {
   setJobs: React.Dispatch<React.SetStateAction<Job[]>>;
 }
 
+const ITEMS_PER_PAGE = 7;
+
 export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs }) => {
   const [filter, setFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // New Job Form State
   const [newJob, setNewJob] = useState<Partial<Job>>({
     title: '', company: '', location: '', type: 'On-site', category: 'Tech', description: ''
   });
 
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter, typeFilter]);
+
   const handleDelete = (id: string) => {
     if (window.confirm('Are you sure you want to delete this job posting?')) {
       setJobs(jobs.filter(j => j.id !== id));
+      // Adjust page if deleting the last item on the last page
+      if (currentJobs.length === 1 && currentPage > 1) {
+        setCurrentPage(prev => prev - 1);
+      }
     }
   };
 
@@ -111,6 +123,16 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
     const matchesType = typeFilter === 'All' || job.type === typeFilter;
     return matchesSearch && matchesType;
   });
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredJobs.length / ITEMS_PER_PAGE);
+  const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
+  const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+  const currentJobs = filteredJobs.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="space-y-6 animate-fade-in w-full max-w-full">
@@ -204,7 +226,7 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
         <div className="overflow-x-auto">
           <table className="w-full text-left min-w-[800px]">
             <thead className="bg-slate-50 border-b border-slate-200">
@@ -217,7 +239,7 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredJobs.map(job => (
+              {currentJobs.map(job => (
                 <tr key={job.id} className="hover:bg-slate-50/50 transition-colors group">
                   <td className="p-4">
                     <div className="font-bold text-brand-dark">{job.title}</div>
@@ -263,9 +285,53 @@ export const AdminJobManager: React.FC<AdminJobManagerProps> = ({ jobs, setJobs 
             </tbody>
           </table>
         </div>
-        {filteredJobs.length === 0 && (
+        
+        {filteredJobs.length === 0 ? (
           <div className="p-12 text-center text-slate-400">
             No jobs found matching your filters.
+          </div>
+        ) : (
+          /* Pagination Footer */
+          <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50/50">
+            <div className="text-sm text-slate-500">
+              Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to <span className="font-medium">{Math.min(indexOfLastItem, filteredJobs.length)}</span> of <span className="font-medium">{filteredJobs.length}</span> opportunities
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-2 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-brand-teal hover:text-white hover:border-brand-teal disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-slate-600 disabled:cursor-not-allowed transition-all"
+                aria-label="Previous Page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`w-8 h-8 rounded-lg text-sm font-medium transition-all ${
+                      currentPage === page
+                        ? 'bg-brand-teal text-white shadow-sm'
+                        : 'text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-brand-teal hover:text-white hover:border-brand-teal disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-slate-600 disabled:cursor-not-allowed transition-all"
+                aria-label="Next Page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
       </div>
