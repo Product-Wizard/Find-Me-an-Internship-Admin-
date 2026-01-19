@@ -59,6 +59,7 @@ const AdminJobManagerPage = () => {
           if (row.length >= 5) {
             newJobs.push({
               // id: +i,
+              locale_type: "",
               title: row[0].trim(),
               company: row[1].trim(),
               location: row[2].trim(),

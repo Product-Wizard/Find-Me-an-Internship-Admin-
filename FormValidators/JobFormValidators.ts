@@ -10,7 +10,8 @@ const JobForm = Yup.object({
   location: Yup.string().required(),
   link: Yup.string().url().required(),
   title: Yup.string().required(),
-  type: Yup.string().required()
+  type: Yup.string().required(),
+  locale_type: Yup.string().required().label("locality type"),
 }).required();
 
 const createJobForm = (intialData?: CreateJobModelInterface) => {
@@ -22,6 +23,7 @@ const createJobForm = (intialData?: CreateJobModelInterface) => {
     link: "",
     title: "",
     type: "",
+    locale_type: ""
   }
   return useForm({
     defaultValues: intialData || initialValues,

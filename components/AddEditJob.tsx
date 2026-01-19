@@ -143,6 +143,20 @@ function AddEditJob({
           </div>
         </div>
         <div>
+          <select
+            className='p-2 border rounded'
+            {...jobForm.register("locale_type")}
+          >
+            <option value=''>Select Job Locality</option>
+            <option value='local'>Local</option>
+            <option value='remote'>Remote</option>
+            <option value='international'>International</option>
+          </select>
+          <FormErrorMessage
+            message={jobForm?.formState?.errors?.locale_type?.message}
+          />
+        </div>
+        <div>
           <input
             placeholder='Description'
             className='p-2 border rounded md:col-span-2'
