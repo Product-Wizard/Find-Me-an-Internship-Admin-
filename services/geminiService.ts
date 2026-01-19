@@ -3,13 +3,8 @@ import { GoogleGenAI } from "@google/genai";
 let aiClient: GoogleGenAI | null = null;
 
 const getApiKey = () => {
-  try {
-    const env = import.meta as any
-    if (typeof process !== 'undefined' && process.env && env.VITE_GEMINI_API_KEY) {
-      return env.VITE_GEMINI_API_KEY;
-    }
-  } catch (e) {
-    // process might not be accessible
+  if (import.meta?.env?.VITE_GEMINI_API_KEY) {
+    return import.meta.env.VITE_GEMINI_API_KEY;
   }
   console.warn("Gemini API Key not found in process.env.API_KEY");
   return '';
@@ -41,7 +36,6 @@ export const streamCareerAdvice = async (
         parts: h.parts
       }))
     });
-
     const result = await chat.sendMessageStream({ message: userMessage });
     return result;
   } catch (error) {
