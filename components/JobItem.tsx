@@ -36,6 +36,7 @@ function JobItem({ job, currentPage }: JobItemProps) {
     location: job.location,
     title: job.title,
     type: job.type,
+    locale_type: job.locale_type,
   };
   const handleDeleteJob = () => {
     delteJobMutation.mutate(job.id, {
