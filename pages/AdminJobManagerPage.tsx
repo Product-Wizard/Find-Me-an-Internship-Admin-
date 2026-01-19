@@ -10,7 +10,7 @@ import Paginator from "@/components/Paginator";
 import { useQueryClient } from "@tanstack/react-query";
 import ApiQueryMutationKeys from "@/consts/ApiQueryMutationKeys";
 
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 20;
 
 const AdminJobManagerPage = () => {
   const [filter, setFilter] = useState("");

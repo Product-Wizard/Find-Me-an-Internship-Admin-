@@ -157,11 +157,12 @@ function AddEditJob({
           />
         </div>
         <div>
-          <input
+          <textarea
             placeholder='Description'
-            className='p-2 border rounded md:col-span-2'
+            className='p-2 border rounded md:col-span-2 w-full'
+            rows={5}
             {...jobForm.register("description")}
-          />
+          ></textarea>
           <FormErrorMessage
             message={jobForm?.formState?.errors?.description?.message}
           />
