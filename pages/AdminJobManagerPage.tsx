@@ -88,7 +88,9 @@ const AdminJobManagerPage = () => {
   return (
     <div className='space-y-6 animate-fade-in w-full max-w-full overflow-x-auto'>
       {createJobMutation.isPending ? <BlockLoadingIndicator /> : null}
-      {fetchJobsQuery.isPending ? <BlockLoadingIndicator /> : null}
+      {fetchJobsQuery.isPending || fetchJobsQuery.isLoading ? (
+        <BlockLoadingIndicator />
+      ) : null}
       <div className='flex flex-col md:flex-row justify-between items-start md:items-end gap-4'>
         <div>
           <h2 className='text-2xl font-bold text-brand-dark'>Job Management</h2>

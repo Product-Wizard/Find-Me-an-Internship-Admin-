@@ -1,5 +1,5 @@
 import { company_size } from "./organization.model";
-import { year_of_study } from "./student.type";
+import { year_of_study } from "./student.model";
 export interface User {
   id: number;
   email: string;

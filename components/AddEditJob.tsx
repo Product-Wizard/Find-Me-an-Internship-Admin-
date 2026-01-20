@@ -147,7 +147,7 @@ function AddEditJob({
             className='p-2 border rounded'
             {...jobForm.register("locale_type")}
           >
-            <option value=''>Select Job Locality</option>
+            <option value=''> Internship Type</option>
             <option value='local'>Local</option>
             <option value='remote'>Remote</option>
             <option value='international'>International</option>

@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import { StudentModelInterface } from "@/types/model/student.type";
+import { StudentModelInterface } from "@/types/model/student.model";
 import { OrganizationModelInterface } from "@/types/model/organization.model";
 import api from "./api";
 import { Login } from "@/types/model/Auth.model";

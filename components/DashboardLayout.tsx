@@ -12,6 +12,8 @@ import {
   Search as SearchIcon,
   Menu,
   X,
+  GraduationCapIcon,
+  Building2,
 } from "lucide-react";
 import SidebarLink from "./SidebarLink";
 
@@ -59,6 +61,18 @@ const DashboardLayout: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
             to='/admin/overview'
             icon={LayoutDashboard}
             label='Overview'
+            onClick={() => setIsSidebarOpen(false)}
+          />
+          <SidebarLink
+            to='/admin/students'
+            icon={GraduationCapIcon}
+            label='Students'
+            onClick={() => setIsSidebarOpen(false)}
+          />
+          <SidebarLink
+            to='/admin/organizations'
+            icon={Building2}
+            label='Organizations'
             onClick={() => setIsSidebarOpen(false)}
           />
           <SidebarLink

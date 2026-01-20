@@ -1,6 +1,6 @@
 import { JobCategoryType, JobType } from "./types/model/Job.model";
 
-interface StandardServerResponse<T> {
+export interface StandardServerResponse<T> {
   error: boolean;
   data: T;
   message: string;
@@ -11,6 +11,9 @@ interface StandardServerResponse<T> {
 export interface ApiPaginationQuery {
   page: number;
   perPage: number;
+}
+
+export interface JobQuery {
   type?: JobType;
   title?: string;
   company?: string;
@@ -19,6 +22,22 @@ export interface ApiPaginationQuery {
   category?: string;
   link?: string;
   description?: string;
+}
+
+
+export interface OrganizationQuery {
+  email: string;
+  company_name: string;
+  industry: string;
+  company_size: string;
+}
+
+
+export interface StudentQuery {
+  email?: string;
+  full_name?: string;
+  year_of_study?: year_of_study;
+  course_of_study?: string;
 }
 
 export interface pagination {
