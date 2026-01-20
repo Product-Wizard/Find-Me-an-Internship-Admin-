@@ -89,10 +89,10 @@ const OrganizationsPage = () => {
                   Email
                 </th>
                 <th className='p-4 text-xs font-bold text-slate-500 uppercase'>
-                  Field of Study
+                  Indusrtry
                 </th>
                 <th className='p-4 text-xs font-bold text-slate-500 uppercase'>
-                  Level
+                  Size
                 </th>
                 <th className='p-4 text-xs font-bold text-slate-500 uppercase text-right'>
                   Actions
