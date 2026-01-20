@@ -5,7 +5,7 @@ import BlockLoadingIndicator from "@/components/BlockLoadingIndicator";
 import Paginator from "@/components/Paginator";
 import { useQueryClient } from "@tanstack/react-query";
 import ApiQueryMutationKeys from "@/consts/ApiQueryMutationKeys";
-import StudentItem from "@/components/StudentITem";
+import StudentItem from "@/components/StudentItem";
 
 const ITEMS_PER_PAGE = 20;
 
