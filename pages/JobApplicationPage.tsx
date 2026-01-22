@@ -1,33 +1,35 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
-import StudentService from "@/ApiService/StudentService";
+import JobApplicationService from "@/ApiService/JobApplicationSevice";
 import BlockLoadingIndicator from "@/components/BlockLoadingIndicator";
 import Paginator from "@/components/Paginator";
 import { useQueryClient } from "@tanstack/react-query";
 import ApiQueryMutationKeys from "@/consts/ApiQueryMutationKeys";
-import StudentItem from "@/components/StudentItem";
+import JobApplicationItem from "@/components/JobApplicantItem";
 
 const ITEMS_PER_PAGE = 20;
 
-const StudentsPage = () => {
+const JobApplicationPage = () => {
   const queryClient = useQueryClient();
   const [filter, setFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const fetchStudentsQuery = StudentService.fetchStudentsServiceQuery({
-    page: currentPage || 1,
-    perPage: ITEMS_PER_PAGE,
-    full_name: filter,
-    year_of_study: filter,
-    email: filter,
-    course_of_study: filter,
-  });
+  const fetchJobApplicationQuery =
+    JobApplicationService.fetchJobApplicationsServiceQuery({
+      page: currentPage || 1,
+      perPage: ITEMS_PER_PAGE,
+      fullname: filter,
+      email: filter,
+      job_id: filter,
+      phone: filter,
+    });
 
   // Reset pagination when filters change
   const trigerFilterSearch = () => {
     setCurrentPage(1);
     queryClient.invalidateQueries({
       queryKey: [
-        ...ApiQueryMutationKeys.StudentMutationQueryKeys.getStudentsQueryKeys,
+        ...ApiQueryMutationKeys.JobApplicationMutationQueryKeys
+          .getJobApplicationsQueryKeys,
         1,
       ],
     });
@@ -35,12 +37,15 @@ const StudentsPage = () => {
 
   return (
     <div className='space-y-6 animate-fade-in w-full max-w-full overflow-x-auto'>
-      {fetchStudentsQuery.isPending || fetchStudentsQuery.isLoading ? (
+      {fetchJobApplicationQuery.isPending ||
+      fetchJobApplicationQuery.isLoading ? (
         <BlockLoadingIndicator />
       ) : null}
       <div className='flex flex-col md:flex-row justify-between items-start md:items-end gap-4'>
         <div>
-          <h2 className='text-2xl font-bold text-brand-dark'>Students</h2>
+          <h2 className='text-2xl font-bold text-brand-dark'>
+            Job Applications
+          </h2>
         </div>
       </div>
       {/* Filters */}
@@ -56,7 +61,7 @@ const StudentsPage = () => {
             <div className='flex items-center'>
               <input
                 type='text'
-                placeholder='Search by student name or email or field of study...'
+                placeholder='Search by job applicants by name, job id, email, job category, or phone ...'
                 className='w-full pl-10 p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-brand-teal'
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
@@ -75,8 +80,8 @@ const StudentsPage = () => {
 
       {/* Table */}
       <div className='bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden flex flex-col'>
-        <div className='overflow-x-auto'>
-          <table className='w-full text-left min-w-[800px]'>
+        <div>
+          <table className='w-full overflow-x-scroll text-left min-w-[800px]'>
             <thead className='bg-slate-50 border-b border-slate-200'>
               <tr>
                 <th className='p-4 text-xs font-bold text-slate-500 uppercase'>
@@ -86,37 +91,48 @@ const StudentsPage = () => {
                   Email
                 </th>
                 <th className='p-4 text-xs font-bold text-slate-500 uppercase'>
-                  Field of Study
+                  Phone
                 </th>
                 <th className='p-4 text-xs font-bold text-slate-500 uppercase'>
-                  Level
+                  Company Name
+                </th>
+                <th className='p-4 text-xs font-bold text-slate-500 uppercase'>
+                  Job Category
+                </th>
+                <th className='p-4 text-xs font-bold text-slate-500 uppercase'>
+                  Job type
                 </th>
                 <th className='p-4 text-xs font-bold text-slate-500 uppercase text-right'>
-                  Actions
+                  Job Title
+                </th>
+                <th className='p-4 text-xs font-bold text-slate-500 uppercase text-right'>
+                  Time of Application
                 </th>
               </tr>
             </thead>
             <tbody className='divide-y divide-slate-100'>
-              {(fetchStudentsQuery?.data?.data || []).map((student) => (
-                <StudentItem
-                  page={currentPage}
-                  student={student}
-                  key={student?.id?.toString()}
-                />
-              ))}
+              {(fetchJobApplicationQuery?.data?.data || []).map(
+                (jobApplication) => (
+                  <JobApplicationItem
+                    currentPage={currentPage}
+                    jobApplication={jobApplication}
+                    key={jobApplication?.id?.toString()}
+                  />
+                )
+              )}
             </tbody>
           </table>
         </div>
 
-        {(fetchStudentsQuery?.data?.data || []).length === 0 ? (
+        {(fetchJobApplicationQuery?.data?.data || []).length === 0 ? (
           <div className='p-12 text-center text-slate-400'>
-            No student found matching your filters.
+            No job application found matching your filters.
           </div>
         ) : (
           <Paginator
             currentPage={currentPage}
             handlePageChange={setCurrentPage}
-            pagination={fetchStudentsQuery?.data?.pagination}
+            pagination={fetchJobApplicationQuery?.data?.pagination}
           />
         )}
       </div>
@@ -124,4 +140,4 @@ const StudentsPage = () => {
   );
 };
 
-export default StudentsPage;
+export default JobApplicationPage;

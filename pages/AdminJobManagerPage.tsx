@@ -84,7 +84,6 @@ const AdminJobManagerPage = () => {
       reader.readAsText(file);
     }
   };
-  console.log("fetch job loading", fetchJobsQuery.isPending);
   return (
     <div className='space-y-6 animate-fade-in w-full max-w-full overflow-x-auto'>
       {createJobMutation.isPending ? <BlockLoadingIndicator /> : null}
@@ -208,6 +207,9 @@ const AdminJobManagerPage = () => {
                 </th>
                 <th className='p-4 text-xs font-bold text-slate-500 uppercase'>
                   Posted
+                </th>
+                <th className='p-4 text-xs font-bold text-slate-500 uppercase'>
+                  applicants
                 </th>
                 <th className='p-4 text-xs font-bold text-slate-500 uppercase text-right'>
                   Actions

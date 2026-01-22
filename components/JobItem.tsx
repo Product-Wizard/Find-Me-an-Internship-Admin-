@@ -36,9 +36,11 @@ function JobItem({ job, currentPage }: JobItemProps) {
     location: job.location,
     title: job.title,
     type: job.type,
-    locale_type: job.locale_type,
+    job_training_scope: job.job_training_scope,
   };
   const handleDeleteJob = () => {
+    const isDelete = confirm("are you sure you want to delete this job ?");
+    if (isDelete == false) return;
     delteJobMutation.mutate(job.id, {
       onSuccess: (data) => {
         toast.success(data.message || "listing deleted");
@@ -87,6 +89,7 @@ function JobItem({ job, currentPage }: JobItemProps) {
         </span>
       </td>
       <td className='p-4 text-sm text-slate-500'>{job?.postedDate}</td>
+      <td className='p-4 text-sm text-slate-500'>{job?.applicants_count}</td>
       <td className='p-4 text-right'>
         <div className='flex justify-end gap-2'>
           <button

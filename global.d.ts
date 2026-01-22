@@ -31,6 +31,12 @@ export interface OrganizationQuery {
   industry: string;
   company_size: string;
 }
+export interface JobApplicationQuery {
+  fullname?: string;
+  email?: string;
+  phone?: string;
+  job_id?: string;
+}
 
 
 export interface StudentQuery {

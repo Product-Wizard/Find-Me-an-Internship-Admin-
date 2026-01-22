@@ -32,6 +32,7 @@ import DashboardLayout from "./components/DashboardLayout";
 import UserStore from "./store/User.store";
 import StudentsPage from "./pages/StudentsPage";
 import OrganizationsPage from "./pages/OrganizationsPage";
+import JobApplicationPage from "./pages/JobApplicationPage";
 
 // Sidebar Item Component
 
@@ -69,6 +70,7 @@ const App: React.FC = () => {
         <Route path='overview' element={<OverViewPage />} />
         <Route path='students' element={<StudentsPage />} />
         <Route path='organizations' element={<OrganizationsPage />} />
+        <Route path='job_applications' element={<JobApplicationPage />} />
         <Route path='jobs' element={<AdminJobManagerPage />} />
         <Route path='resources' element={<AdminResourceManager />} />
         <Route path='settings' element={<SettingsPage />} />
