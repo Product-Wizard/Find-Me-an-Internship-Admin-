@@ -34,12 +34,16 @@ const AdminJobManagerPage = () => {
   // Reset pagination when filters change
   const trigerFilterSearch = () => {
     setCurrentPage(1);
-    queryClient.invalidateQueries({
-      queryKey: [
-        ...ApiQueryMutationKeys.JobQuryMutationKeys.getJobsQueryKeys,
-        1,
-      ],
-    });
+    setTimeout(
+      () =>
+        queryClient.invalidateQueries({
+          queryKey: [
+            ...ApiQueryMutationKeys.JobQuryMutationKeys.getJobsQueryKeys,
+            1,
+          ],
+        }),
+      400
+    );
   };
 
   useEffect(() => {
