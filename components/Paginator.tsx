@@ -31,7 +31,7 @@ function Paginator({
         >
           <ChevronLeft className='w-4 h-4' />
           <span>
-            prevvious page{" "}
+            Previous page{" "}
             {pagination?.previousPage ? pagination?.previousPage : ""}
           </span>
         </button>
@@ -43,7 +43,7 @@ function Paginator({
           aria-label='Next Page'
         >
           <span>
-            next page{" "}
+            Next page{" "}
             {currentPage < pagination?.totalPages
               ? currentPage + 1
               : currentPage}

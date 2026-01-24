@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { CreateJobModelInterface } from "@/types/model/Job.model";
 import FormErrorMessage from "./FormErrorMessage";
 import BlockLoadingIndicator from "./BlockLoadingIndicator";
+import NigerianStates from "@/consts/NigerianStates";
 
 interface AddEditJobProps {
   isAdding: boolean;
@@ -137,12 +138,6 @@ function AddEditJob({
                   Commercial/Finance
                 </option>
                 <option value='non_Profit'>Non-Profit</option>
-                {/* <option value='marketing'>Marketing</option>
-                <option value='finance'>Finance</option>
-                <option value='tech'>Tech</option>
-                <option value='design'>Design</option>
-                <option value='admin'>Admin</option>
-                <option value='research'>Research</option> */}
               </select>
               <FormErrorMessage
                 message={jobForm?.formState?.errors?.category?.message}
@@ -163,6 +158,23 @@ function AddEditJob({
               message={jobForm?.formState?.errors?.job_training_scope?.message}
             />
           </div>
+
+          <div>
+            <select
+              className='p-2 border rounded'
+              {...jobForm.register("state")}
+            >
+              <option value=''>Select State</option>
+              {NigerianStates.getStates().map((item) => {
+                return <option value={item.toLowerCase()}>{item}</option>;
+              })}
+            </select>
+            <FormErrorMessage
+              message={jobForm?.formState?.errors?.state?.message}
+            />
+          </div>
+          <div></div>
+
           <div>
             <textarea
               placeholder='Description'

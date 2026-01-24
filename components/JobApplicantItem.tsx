@@ -63,7 +63,7 @@ function JobApplicantItem({
         {jobApplication.job?.company}
       </td>
       <td className='p-4 text-sm text-slate-500'>
-        {jobApplication?.job?.category}
+        {jobApplication?.job?.category?.replaceAll("_", " ")}
       </td>
       <td className='p-4 text-sm text-slate-500'>
         {jobApplication?.job?.type}

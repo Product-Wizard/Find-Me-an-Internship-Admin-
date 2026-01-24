@@ -35,7 +35,10 @@ const AdminJobManagerPage = () => {
   const trigerFilterSearch = () => {
     setCurrentPage(1);
     queryClient.invalidateQueries({
-      queryKey: [...ApiQueryMutationKeys.JobQuryMutationKeys.getJobsQueryKeys],
+      queryKey: [
+        ...ApiQueryMutationKeys.JobQuryMutationKeys.getJobsQueryKeys,
+        1,
+      ],
     });
   };
 
@@ -58,17 +61,16 @@ const AdminJobManagerPage = () => {
           const row = lines[i].split(",");
           if (row.length >= 5) {
             newJobs.push({
-              // id: +i,
-              locale_type: "",
+              job_training_scope: "",
               title: row[0].trim(),
               company: row[1].trim(),
               location: row[2].trim(),
               type:
                 (row[3].trim() as "remote" | "on-site" | "hybrid") || "on-site",
               description: row[5]?.trim() || "Imported via CSV",
-              // postedDate: "Imported",
               category: row[4].trim() as any,
               link: "http://test.com",
+              state: "",
             });
           }
         }

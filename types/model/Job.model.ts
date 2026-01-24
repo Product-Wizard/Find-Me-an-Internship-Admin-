@@ -1,6 +1,5 @@
 export type JobType = 'remote' | 'on-site' | 'hybrid' | "";
 export type JobCategoryType = "stem " | "humanities_and_art" | "commercial_and_finance" | "non_Profit" | "";
-// export type JobCategoryType = "marketing" | "tech" | "admin" | "research" | "finance" | "design" | "";
 export type JobLocalityType = "local" | "remote" | "international" | "";
 export type JobTrainigScope = "siwes_or_general" | "graduate_training" | "international" | "";
 
@@ -12,7 +11,7 @@ export interface JobModelInterface {
   type: JobType;
   category: JobCategoryType;
   link: string;
-  // organization_id: number;
+  state: string;
   postedDate: string;
   description: string;
   job_training_scope: JobTrainigScope;
