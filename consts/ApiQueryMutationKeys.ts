@@ -30,12 +30,18 @@ const JobApplicationMutationQueryKeys = Object.freeze({
   deleteJobApplicationMutationKeys: [ "delete_Job_application" ],
 });
 
+const NewsLetterSubscriberApiQuryMutationKeys = Object.freeze({
+  createNewsLetterSubscriberApiMutationKeys: [ "create_news_letter_subscriber" ],
+
+})
+
 const ApiQueryMutationKeys = Object.freeze({
   JobQuryMutationKeys,
   AuthMutationKeys,
   StudentMutationQueryKeys,
   OrganizationMutationQueryKeys,
-  JobApplicationMutationQueryKeys
+  JobApplicationMutationQueryKeys,
+  NewsLetterSubscriberApiQuryMutationKeys
 });
 
 export default ApiQueryMutationKeys
