@@ -15,6 +15,7 @@ import {
   GraduationCapIcon,
   Building2,
   UserSearch,
+  Mail,
 } from "lucide-react";
 import SidebarLink from "./SidebarLink";
 
@@ -92,6 +93,12 @@ const DashboardLayout: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
             to='/admin/resources'
             icon={FileText}
             label='Resource Center'
+            onClick={() => setIsSidebarOpen(false)}
+          />
+          <SidebarLink
+            to='/admin/news_letter_subscriber'
+            icon={Mail}
+            label='Newsletter Subscribers'
             onClick={() => setIsSidebarOpen(false)}
           />
 

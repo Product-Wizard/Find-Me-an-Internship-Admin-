@@ -8,6 +8,14 @@ const JobQuryMutationKeys = Object.freeze({
   deleteJobMutationKeys: [ "delete_job" ],
 })
 
+const ResourceQuryMutationKeys = Object.freeze({
+  createResourceMutationKeys: [ "create_resource" ],
+  updateResourceMutationKeys: [ "update_resource" ],
+  getResourcesQueryKeys: [ "get_resources" ],
+  getResourceQueryKeys: [ "get_resource" ],
+  deleteResourceMutationKeys: [ "delete_resource" ],
+})
+
 const AuthMutationKeys = Object.freeze({
   loginMutationKeys: [ "login" ],
 });
@@ -31,8 +39,9 @@ const JobApplicationMutationQueryKeys = Object.freeze({
 });
 
 const NewsLetterSubscriberApiQuryMutationKeys = Object.freeze({
-  createNewsLetterSubscriberApiMutationKeys: [ "create_news_letter_subscriber" ],
-
+  getNewsLetterSubscribersApiQueryKeys: [ "get_news_letter_subscribers" ],
+  getNewsLetterSubscriberApiQueryKeys: [ "get_news_letter_subscriber" ],
+  deleteNewsLetterSubscriberApiQueryKeys: [ "delete_news_letter_subscriber" ],
 })
 
 const ApiQueryMutationKeys = Object.freeze({
@@ -41,7 +50,8 @@ const ApiQueryMutationKeys = Object.freeze({
   StudentMutationQueryKeys,
   OrganizationMutationQueryKeys,
   JobApplicationMutationQueryKeys,
-  NewsLetterSubscriberApiQuryMutationKeys
+  NewsLetterSubscriberApiQuryMutationKeys,
+  ResourceQuryMutationKeys,
 });
 
 export default ApiQueryMutationKeys

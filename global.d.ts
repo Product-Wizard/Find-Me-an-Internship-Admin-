@@ -24,6 +24,15 @@ export interface JobQuery {
   description?: string;
 }
 
+export interface ResourceQuery {
+  title?: string;
+  category?: string;
+  author?: string;
+  imageUrl?: string;
+  summary?: string;
+  body?: string;
+}
+
 
 export interface OrganizationQuery {
   email: string;
@@ -46,6 +55,10 @@ export interface StudentQuery {
   course_of_study?: string;
 }
 
+interface NewsLetterSubscriberQuery {
+  email?: string;
+  id?: number;
+}
 export interface pagination {
   nextPage: number;
   previousPage: number;

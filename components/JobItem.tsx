@@ -37,6 +37,7 @@ function JobItem({ job, currentPage }: JobItemProps) {
     title: job.title,
     type: job.type,
     job_training_scope: job.job_training_scope,
+    state: job.state,
   };
   const handleDeleteJob = () => {
     const isDelete = confirm("are you sure you want to delete this job ?");
