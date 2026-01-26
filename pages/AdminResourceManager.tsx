@@ -6,6 +6,7 @@ import ResourceApi from "@/api/resourceApi";
 import ResourceService from "@/ApiService/ResourceSevice";
 import { useQueryClient } from "@tanstack/react-query";
 import ApiQueryMutationKeys from "@/consts/ApiQueryMutationKeys";
+import Paginator from "@/components/Paginator";
 
 const PER_PAGE = 20;
 
@@ -99,6 +100,15 @@ export const AdminResourceManager = () => {
         {(resourceQuery?.data?.data || []).map((resource: any) => (
           <ResourceItem page={page} key={resource.id} resource={resource} />
         ))}
+      </div>
+
+      {/* pagination */}
+      <div>
+        <Paginator
+          currentPage={page}
+          handlePageChange={setPage}
+          pagination={resourceQuery?.data?.pagination}
+        />
       </div>
     </div>
   );

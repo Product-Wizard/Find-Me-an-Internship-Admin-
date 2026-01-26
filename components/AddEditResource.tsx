@@ -25,6 +25,7 @@ function AddEditResource({
   handleOnEditSuccess,
 }: AddEditResourceProps) {
   const resourceForm = ResourceFormValidator.createResourceForm(resource);
+  const imageUrl = resourceForm.watch("imageUrl");
   // mutation instance
   const resourceMutation = isAdding
     ? ResourceService.createResourceServiceMutation()
@@ -53,6 +54,7 @@ function AddEditResource({
       },
     });
   };
+
   return (
     <div className='absolute z-40  w-full top-0 right-0 flex justify-center items-center'>
       <div className='bg-white p-8  rounded-2xl shadow-lg border border-slate-100 animate-fade-in-up'>
@@ -123,9 +125,21 @@ function AddEditResource({
               />
             </div>
             <div>
-              <label className='block text-sm font-semibold text-slate-700 mb-2'>
-                Image URL
-              </label>
+              <div className='flex items-center'>
+                <label className='block text-sm font-semibold text-slate-700 mb-2'>
+                  Image URL
+                </label>
+                {imageUrl &&
+                !resourceForm?.formState?.errors?.imageUrl?.message ? (
+                  <div className='h-14 w-16 overflow-hidden'>
+                    <img
+                      className='block h-full w-full object-cover'
+                      src={imageUrl}
+                      alt='image preview'
+                    />
+                  </div>
+                ) : null}
+              </div>
               <div className='relative'>
                 <ImageIcon className='absolute left-3 top-3.5 w-5 h-5 text-slate-400' />
                 <input

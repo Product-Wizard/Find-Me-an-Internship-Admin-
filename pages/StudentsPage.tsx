@@ -17,7 +17,7 @@ const StudentsPage = () => {
     page: currentPage || 1,
     perPage: ITEMS_PER_PAGE,
     full_name: filter,
-    year_of_study: filter,
+    internship_type: filter,
     email: filter,
     course_of_study: filter,
   });
@@ -89,7 +89,7 @@ const StudentsPage = () => {
                   Field of Study
                 </th>
                 <th className='p-4 text-xs font-bold text-slate-500 uppercase'>
-                  Level
+                  Internsip Type
                 </th>
                 <th className='p-4 text-xs font-bold text-slate-500 uppercase text-right'>
                   Actions

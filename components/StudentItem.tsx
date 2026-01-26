@@ -54,7 +54,7 @@ function StudentItem({ student, page }: JobItemProps) {
       <td className='p-4'>
         <p className='font-bold text-brand-dark'>{student?.course_of_study}</p>
       </td>
-      <td className='p-4 text-sm text-slate-500'>{student.year_of_study}</td>
+      <td className='p-4 text-sm text-slate-500'>{student.internship_type}</td>
       <td className='p-4 text-right'>
         <div className='flex justify-end gap-2'>
           <button

@@ -51,7 +51,7 @@ export interface JobApplicationQuery {
 export interface StudentQuery {
   email?: string;
   full_name?: string;
-  year_of_study?: year_of_study;
+  internship_type?: string;
   course_of_study?: string;
 }
 
