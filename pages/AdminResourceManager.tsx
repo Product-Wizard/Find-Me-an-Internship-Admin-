@@ -75,17 +75,30 @@ export const AdminResourceManager = () => {
       </div>
 
       <div className='flex items-center'>
-        <input
-          type='text'
-          placeholder='Search resources by title, summary, job category...'
-          className='w-full pl-10 p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-brand-teal'
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onBlur={trigerFilterSearch}
-        />
-        <button type='submit' className=' rounded-lg bg-brand-teal p-3 ml-1'>
-          <Search className='w-4 h-4 text-white' />
-        </button>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            document.getElementById("search-text-input")?.blur();
+            // if (!search) return;
+            trigerFilterSearch();
+          }}
+        >
+          <input
+            type='text'
+            id='search-text-input'
+            placeholder='Search resources by title, summary, job category...'
+            className='w-full pl-10 p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-brand-teal'
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onBlur={() => {
+              // if (!search) return;
+              trigerFilterSearch();
+            }}
+          />
+          <button type='submit' className=' rounded-lg bg-brand-teal p-3 ml-1'>
+            <Search className='w-4 h-4 text-white' />
+          </button>
+        </form>
       </div>
 
       {addNewResource ? (

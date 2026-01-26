@@ -55,17 +55,23 @@ const JobApplicationPage = () => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              document.getElementById("search-text-input")?.blur();
+              // if (!filter) return;
               trigerFilterSearch();
             }}
           >
             <div className='flex items-center'>
               <input
                 type='text'
+                id='search-text-input'
                 placeholder='Search by job applicants by name, job id, email, job category, or phone ...'
                 className='w-full pl-10 p-2 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-brand-teal'
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
-                onBlur={trigerFilterSearch}
+                onBlur={() => {
+                  // if (!filter) return;
+                  trigerFilterSearch();
+                }}
               />
               <button
                 type='submit'
